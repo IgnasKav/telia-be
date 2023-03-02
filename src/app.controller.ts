@@ -1,6 +1,17 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CatBreedDto } from './dto/CatBreed.dto';
+import { IsString, IsUUID } from 'class-validator';
+
+class IdParam {
+  @IsUUID()
+  id: string;
+}
+
+class NameParam {
+  @IsString()
+  name: string;
+}
 
 @Controller('cats')
 export class AppController {
@@ -12,18 +23,18 @@ export class AppController {
   }
 
   @Get(':id')
-  getCatBreedById(@Param() params): Promise<CatBreedDto> {
+  getCatBreedById(@Param() params: IdParam): Promise<CatBreedDto> {
     return this.appService.getCatBreedById(params.id);
   }
 
   @Delete(':id')
-  deleteCatBreed(@Param('id') id): Promise<void> {
-    return this.appService.deleteCatBreed(id);
+  deleteCatBreed(@Param() params: IdParam): Promise<void> {
+    return this.appService.deleteCatBreed(params.id);
   }
 
   @Get('/name/:name')
-  getCatBreedByName(@Param('name') name: string): Promise<CatBreedDto[]> {
-    return this.appService.getCatBreedByName(name);
+  getCatBreedByName(@Param() params: NameParam): Promise<CatBreedDto[]> {
+    return this.appService.getCatBreedByName(params.name);
   }
 
   @Post()

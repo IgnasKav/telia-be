@@ -57,7 +57,7 @@ export class AppService {
   async getCatBreedByName(name: string): Promise<CatBreedDto[]> {
     const catBreeds = await this.catRepository
       .createQueryBuilder('catBreed')
-      .where('catBreed.name like :name', { name: `%${name}%` })
+      .where('catBreed.name ilike :name', { name: `%${name}%` })
       .getMany();
 
     return catBreeds.map((c) => CatBreedDto.fromEntity(c));
