@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CatBreedEntity } from './entities/catBreedEntity';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { CatBreedSearchRequest } from './dto/CatBreedSearchRequest';
 
 @Injectable()
 export class AppService {
@@ -58,6 +59,25 @@ export class AppService {
     const catBreeds = await this.catRepository
       .createQueryBuilder('catBreed')
       .where('catBreed.name ilike :name', { name: `%${name}%` })
+      .getMany();
+
+    return catBreeds.map((c) => CatBreedDto.fromEntity(c));
+  }
+
+  async search(searchRequest: CatBreedSearchRequest): Promise<CatBreedDto[]> {
+    const { searchText, sortField, sortDirection, pageSize, page } =
+      searchRequest;
+
+    if (sortDirection != 'ASC' && sortDirection != 'DESC') {
+      throw new BadRequestException(null, 'sortDirection must be ASC or DESC');
+    }
+
+    const catBreeds = await this.catRepository
+      .createQueryBuilder('catBreed')
+      .where('catBreed.name ilike :name', { name: `%${searchText}%` })
+      .addOrderBy(`catBreed.${sortField}`, sortDirection)
+      .limit(pageSize)
+      .offset(page * pageSize)
       .getMany();
 
     return catBreeds.map((c) => CatBreedDto.fromEntity(c));

@@ -1,7 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { CatBreedDto } from './dto/CatBreed.dto';
 import { IsString, IsUUID } from 'class-validator';
+import {
+  CatBreedSearchRequest,
+  SearchField,
+} from './dto/CatBreedSearchRequest';
 
 class IdParam {
   @IsUUID()
@@ -35,6 +47,11 @@ export class AppController {
   @Get('/name/:name')
   getCatBreedByName(@Param() params: NameParam): Promise<CatBreedDto[]> {
     return this.appService.getCatBreedByName(params.name);
+  }
+
+  @Post('/search')
+  searchCatBreeds(@Body() searchRequest: CatBreedSearchRequest) {
+    return this.appService.search(searchRequest);
   }
 
   @Post()
