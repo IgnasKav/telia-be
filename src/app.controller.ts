@@ -21,7 +21,7 @@ export class AppController {
     return this.appService.deleteCatBreed(id);
   }
 
-  @Get(':name')
+  @Get('/name/:name')
   getCatBreedByName(@Param('name') name: string): Promise<CatBreedDto[]> {
     return this.appService.getCatBreedByName(name);
   }
